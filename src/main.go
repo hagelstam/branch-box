@@ -18,7 +18,7 @@ func main() {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(Response{Message: "Hello team!"})
+		json.NewEncoder(w).Encode(Response{Message: "Hello world!"})
 	})
 
 	log.Println("Server starting on :8080...")
