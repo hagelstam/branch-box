@@ -24,3 +24,5 @@ tmp/
 
 # Built binary
 bin/
+
+setup/
