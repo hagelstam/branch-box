@@ -1,5 +1,4 @@
 terraform {
-
   backend "s3" {}
 
   required_version = ">= 1.0.0"
@@ -7,39 +6,18 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 3.19"
+      version = ">= 5.99"
     }
     docker = {
       source  = "kreuzwerker/docker"
-      version = ">= 2.12"
+      version = ">= 3.6"
     }
   }
-}
-
-variable "name" {
-  type        = string
-  description = "name for the resources"
-}
-
-variable "environment" {
-  type        = string
-  description = "environment for the resources"
-}
-
-variable "image_tag" {
-  type        = string
-  description = "container image tag"
 }
 
 locals {
   ns = "${var.name}-${var.environment}"
 }
-
-data "aws_region" "current" {}
-
-data "aws_caller_identity" "current" {}
-
-data "aws_ecr_authorization_token" "token" {}
 
 provider "aws" {}
 
@@ -70,8 +48,4 @@ module "lambda_function_from_container_image" {
   image_uri                  = module.docker_image.image_uri
   architectures              = ["x86_64"]
   create_lambda_function_url = true
-}
-
-output "endpoint_url" {
-  value = module.lambda_function_from_container_image.lambda_function_url
 }

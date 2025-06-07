@@ -1,14 +1,13 @@
 GOFILES = $(shell find . -name \*.go)
 
 build: # Build the application
-	@go build -o bin/main src/main.go
+	@go build -o bin/main cmd/main.go
 
 run: # Run the application
-	@go run src/main.go
+	@go run cmd/main.go
 
 test: # Run tests
-	# @go test ./... -v
-	@ echo "Tests are not implemented yet"
+	@go test ./... -v -cover
 
 fmt: # Verify gofmt and goimports
 	@echo "Verifying gofmt..."
@@ -16,7 +15,7 @@ fmt: # Verify gofmt and goimports
 
 	@echo "Verifying goimports..."
 	@!(go run golang.org/x/tools/cmd/goimports@latest -l -d ${GOFILES} | grep '[a-z]')
-
+	
 lint: # Lint
 	@if command -v golangci-lint > /dev/null; then \
 		golangci-lint run ./...; \

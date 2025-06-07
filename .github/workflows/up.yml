@@ -9,8 +9,10 @@ jobs:
   test:
     name: Build and test
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -37,11 +39,26 @@ jobs:
             echo
             exit 1
           fi
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.4"
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.1
 
   up:
     name: Deploy PR to ephemeral environment
     runs-on: ubuntu-latest
-    needs: [test]
+    needs: [test, lint]
 
     environment:
       name: preview
@@ -53,7 +70,6 @@ jobs:
       pull-requests: write
 
     env:
-      AWS_REGION: eu-north-1
       AWS_ROLE: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-action-branch-box
       TF_BACKEND_S3_BUCKET: tf-state-branch-box-${{ secrets.AWS_ACCOUNT_ID }}
 
@@ -69,21 +85,20 @@ jobs:
       - name: Assume AWS IAM role
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ vars.AWS_REGION }}
           role-to-assume: ${{ env.AWS_ROLE }}
 
       - name: Install Terraform CLI
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.2.9
           terraform_wrapper: false
 
       - name: Lambda-ify
-        run: echo "COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.7.1 /lambda-adapter /opt/extensions/lambda-adapter" >> Dockerfile
+        run: echo "COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.9.1 /lambda-adapter /opt/extensions/lambda-adapter" >> Dockerfile
 
       - name: Deploy to ephemeral environment
         id: deploy
-        working-directory: ./terraform
+        working-directory: ./infra
         run: |
           terraform init \
             -backend-config="bucket=${TF_BACKEND_S3_BUCKET}" \
