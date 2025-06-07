@@ -32,7 +32,7 @@ jobs:
       - name: Assume AWS IAM role
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ vars.AWS_REGION }}
           role-to-assume: ${{ env.AWS_ROLE }}
 
       - name: Install Terraform CLI
