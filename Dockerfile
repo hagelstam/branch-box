@@ -18,6 +18,6 @@ RUN chown appuser:appuser /app/main
 
 USER appuser
 
-EXPOSE 8080
+ENV PORT=8080
 
 CMD ["./main"]
