@@ -7,6 +7,7 @@ jobs:
   down:
     name: Destroy ephemeral environment
     runs-on: ubuntu-latest
+
     environment:
       name: preview
 
