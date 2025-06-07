@@ -73,9 +73,10 @@ jobs:
           role-to-assume: ${{ env.AWS_ROLE }}
 
       - name: Install Terraform CLI
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.2.9
+          terraform_wrapper: false
 
       - name: Lambda-ify
         run: echo "COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.7.1 /lambda-adapter /opt/extensions/lambda-adapter" >> Dockerfile
@@ -93,13 +94,13 @@ jobs:
             -var="environment=${ENVIRONMENT}" \
             -var="image_tag=${GITHUB_SHA}"
 
-          echo "URL=$(terraform output -json | jq '.endpoint_url.value' -r)" >> $GITHUB_OUTPUT
+          echo "URL=$(terraform output -json | jq -r '.endpoint_url.value')" >> $GITHUB_OUTPUT
 
       - name: Add HTTPS endpoint to PR comment
         uses: mshick/add-pr-comment@v2
         with:
           message: |
-            :rocket: Code successfully deployed to a new ephemeral containerized PR environment!
+            :rocket: Successfully deployed to a new PR environment!
 
             ${{ steps.deploy.outputs.URL }}
           allow-repeats: true
