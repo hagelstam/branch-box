@@ -100,7 +100,7 @@ jobs:
 
       - name: Deploy to ephemeral environment
         id: deploy
-        working-directory: ./terraform
+        working-directory: ./infra
         run: |
           terraform init \
             -backend-config="bucket=${TF_BACKEND_S3_BUCKET}" \

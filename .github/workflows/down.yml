@@ -37,12 +37,13 @@ jobs:
           role-to-assume: ${{ env.AWS_ROLE }}
 
       - name: Install Terraform CLI
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.2.9
+          terraform_version: 1.13.0
+          terraform_wrapper: false
 
       - name: Dispose of ephemeral environment
-        working-directory: ./terraform
+        working-directory: ./infra
         run: |
           terraform init \
             -backend-config="bucket=${TF_BACKEND_S3_BUCKET}" \
