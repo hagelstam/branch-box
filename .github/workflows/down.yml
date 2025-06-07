@@ -17,7 +17,6 @@ jobs:
       pull-requests: write
 
     env:
-      AWS_REGION: eu-north-1
       AWS_ROLE: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-action-branch-box
       TF_BACKEND_S3_BUCKET: tf-state-branch-box-${{ secrets.AWS_ACCOUNT_ID }}
 
