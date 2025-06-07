@@ -7,6 +7,10 @@ import (
 	"os"
 )
 
+type Response struct {
+	Message string `json:"message"`
+}
+
 func helloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)

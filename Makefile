@@ -1,10 +1,10 @@
 GOFILES = $(shell find . -name \*.go)
 
 build: # Build the application
-	@go build -o bin/main src/main.go
+	@go build -o bin/main cmd/main.go
 
 run: # Run the application
-	@go run src/main.go
+	@go run cmd/main.go
 
 test: # Run tests
 	@go test ./... -v -cover
