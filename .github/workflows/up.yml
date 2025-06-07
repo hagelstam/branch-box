@@ -39,6 +39,7 @@ jobs:
             echo
             exit 1
           fi
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -93,17 +94,28 @@ jobs:
         with:
           terraform_wrapper: false
 
-      - name: Lambda-ify
-        run: echo "COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.9.1 /lambda-adapter /opt/extensions/lambda-adapter" >> Dockerfile
-
-      - name: Deploy to ephemeral environment
-        id: deploy
+      - name: Terraform init
         working-directory: ./infra
         run: |
           terraform init \
             -backend-config="bucket=${TF_BACKEND_S3_BUCKET}" \
             -backend-config="key=${ENVIRONMENT}.tfstate"
 
+      - name: Terraform format
+        working-directory: ./infra
+        run: terraform fmt -check
+
+      - name: Terraform validate
+        working-directory: ./infra
+        run: terraform validate
+
+      - name: Lambda-ify
+        run: echo "COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.9.1 /lambda-adapter /opt/extensions/lambda-adapter" >> Dockerfile
+
+      - name: Terraform apply
+        id: deploy
+        working-directory: ./infra
+        run: |
           terraform apply -auto-approve \
             -var="name=${{ github.event.repository.name }}" \
             -var="environment=${ENVIRONMENT}" \
