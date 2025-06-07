@@ -8,6 +8,9 @@ jobs:
     name: Destroy ephemeral environment
     runs-on: ubuntu-latest
 
+    environment:
+      name: preview
+
     permissions:
       id-token: write
       contents: read

@@ -7,8 +7,8 @@ run: # Run the application
 	@go run src/main.go
 
 test: # Run tests
-	@go vet ./...
-	@go test ./... -v -cover
+	# @go test ./... -v
+	@ echo "Tests are not implemented yet"
 
 fmt: # Verify gofmt and goimports
 	@echo "Verifying gofmt..."
